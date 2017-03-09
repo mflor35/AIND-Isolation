@@ -37,8 +37,7 @@ def custom_score(game, player):
         The heuristic value of the current game state to the specified player.
     """
 
-    # TODO: finish this function!
-    raise NotImplementedError
+    return len(game.get_legal_moves(player)) + 0.0
 
 
 class CustomPlayer:
@@ -172,8 +171,9 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        if len(game.get_legal_moves()) == 0:
+            return self.score(), (-1, -1)
+        
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
@@ -216,5 +216,7 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        if len(game.get_legal_moves()) == 0:
+            return self.score, (-1, -1)
+
+        # TODO use minimax to prune the tree
