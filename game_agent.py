@@ -40,6 +40,39 @@ def custom_score(game, player):
     return len(game.get_legal_moves(player)) + 0.0
 
 
+def min_value(game):
+    if len(game.get_legal_moves()) == 0:
+        return game.utility()
+
+    actions = game.get_legal_moves()
+    best_score = float('inf')
+
+    for move in actions:
+        next_state = game.forecast_move(move)
+        score = max_vale(next_state.get_legal_moves())
+        if score < best_score:
+            best_move = move
+            best_score = score
+
+    return best_move
+
+
+def max_value(game):
+    if len(game.get_legal_moves()) == 0:
+        return game.utility()
+
+    actions = game.get_legal_moves()
+    best_score = float('-inf')
+    for move in actions:
+        next_state = game.forecast_move(move)
+        score = min_value(next_state)
+        if score > best_score:
+            best_move = move
+            best_score = score
+
+    return best_score
+
+
 class CustomPlayer:
     """Game-playing agent that chooses a move using your evaluation function
     and a depth-limited minimax algorithm with alpha-beta pruning. You must
@@ -171,9 +204,23 @@ class CustomPlayer:
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
+        # Player has no place to move
         if len(game.get_legal_moves()) == 0:
             return self.score(), (-1, -1)
-        
+
+        actions = game.get_legal_moves()
+        # At the root of the tree
+        if depth == 0:
+            return self.score(), (-1, -1)
+        best_action = actions[0]
+        for action in actions:
+            next_state = game.forecast_move(action)
+            score = min_value(next_state)
+            if score > best_action:
+                best_action = action
+
+        return best_action
+
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
         """Implement minimax search with alpha-beta pruning as described in the
@@ -219,4 +266,4 @@ class CustomPlayer:
         if len(game.get_legal_moves()) == 0:
             return self.score, (-1, -1)
 
-        # TODO use minimax to prune the tree
+        # TODO prune minimax tree
